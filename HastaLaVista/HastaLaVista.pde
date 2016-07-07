@@ -4,7 +4,6 @@ import japplemenubar.*;
 import processing.serial.*;
 import cc.arduino.*;
 import org.firmata.*;
-import SimpleOpenNI.*;
 import mpe.client.*;
 import processing.net.*;
 import org.seltar.Bytes2Web.*;
@@ -33,25 +32,6 @@ boolean isActivity1Detected = false;
 boolean isActivity2Detected = false;
 
 float backToStartTimer = 60;
-
-//Variables for blobDetection
-int maxDetectionDistance = 2000;
-int minDetectionDistance = 500;
-int steps = 1;
-int adjacent = 2000;
-int kinectHeight = 2600;
-PVector startPosition;
-
-SimpleOpenNI context;
-blobDetection blobDetect;
-
-
-//Variables for WebCam
-highscoreClass Camera;
-Capture webcam;
-MySQL dbconnection;
-String url = "http://hwo.linkhosting.nl/wp-content/themes/twentysixteen-rico/Upload.php";
-String photoFolder = "C:/Users/Hylke/Desktop/HastaLaVista";
 
 // geel = digitalRead(2)
 // rood = digitalRead(3)
@@ -121,29 +101,7 @@ void setup()
     exit();
     return;
   }
-  //Start the detphCamera
-  context.enableDepth();
-  context.start();
-
-  //Define PVectors
-  startPosition = new PVector(300, 300);
-  //Import the different classes
-  blobDetect = new blobDetection(steps, ( minDetectionDistance + maxDetectionDistance ) / 2, adjacent, kinectHeight, startPosition);
-
-  blobDetect.createPathArray();
-
-  //End of blobDetection stuff ------------------------------------------------------ 
-  //All kind of stuff for the Camera shizzle ------------------------------------------------------
-  String user     = "hwo_ricolatino";
-  String pass     = "qwertyuiop";
-  String database = "hwo_fotos";
-  String ip       = "217.119.237.114";
-  Camera = new highscoreClass(this);
-  webcam = new Capture(this, 640, 480); 
-  webcam.start();
-  dbconnection = new MySQL( this, ip, database, user, pass );
-  //End of camera shizzle
-
+  
   stateHandler = new StateHandler( "HastaLaVista" );
   stateHandler.changeStateTo( START_STATE );
 }
@@ -151,10 +109,6 @@ void setup()
 void draw()
 {
   traceIfChanged("Message", message + "");
-  //Allemaal toffe blobDetection shit ------------------------------------------------------
-  context.update();
-  myServer.write(message);
-  //Einde toffe blobDetection shit, ik schrijf inmiddels al Nederlands ------------------------------------------------------
 
   if ( frameCount % 3 == 0 && isArduinoConnected() ) {
     arduino = getConnectedArduino();    
